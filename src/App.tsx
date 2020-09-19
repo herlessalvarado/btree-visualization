@@ -2,6 +2,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import './App.css';
 import { BPlusTree } from './components/B+Tree/BPlusTree';
+import { BTree } from './components/BTree/BTree';
 
 const margin = {
   top: 20, left: 0,
@@ -36,15 +37,16 @@ const settings = {
 
 function App() {
 
-  const btree = new BPlusTree<number>(3);
+  const btree = new BPlusTree<number>(4);
+  // const btree = new BTree<number>(4);
   
-  for(let i = 0; i < 5 ; i++){
+  for(let i = 0; i < 17 ; i++){
     btree.insert(i);
   }
 
   const BTREE = btree.toHierarchy(btree.getRoot());
 
-  const tree = d3.tree().size([500, settings.width - 200]).separation(() => (settings.keyCellWidth * 2));
+  const tree = d3.tree().size([1200, settings.width - 200]).separation(() => (settings.keyCellWidth * 2));
 
   const root = tree(d3.hierarchy(BTREE));
 
@@ -61,6 +63,13 @@ function App() {
       return links;
     }
   };
+
+  function arrows() {
+    if(root) {
+      const arrows = getArrows(root.leaves());
+      return arrows;
+    }
+  }
 
   function getSVGParams(key: any, position: any, keys: any) {
     return {
@@ -114,8 +123,48 @@ function App() {
     });
   };
 
+  function getArrows(leaves: any) {
+    return leaves.map((d: any, i: any, a: any) => {
+      const x = d.x;
+      const y = margin.top - d.y;
+      let xright = 0;
+      if(a[i+1]){
+        xright = a[i+1].x - (settings.keyCellWidth*2);
+      }
+      return {
+        id: i,
+        // d: `M ${x} ${y} l ${xright} 0`,
+        x1: `${x}`,
+        y1: `${y}`,
+        x2: `${xright}`,
+        style: settings.linkStyles.plain,
+      };
+    })
+  }
+
+  function printArrows() {
+    const items = [];
+    for(const arrow of arrows()) {
+      // <path className="arrow" d={arrow.d} style={arrow.style}></path>
+      items.push(
+        <g>
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+            refX="0" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" />
+            </marker>
+          </defs>
+          <line x1={arrow.x1} y1={arrow.y1} y2={arrow.y1} x2={arrow.x2} stroke="#000" 
+  marker-end="url(#arrowhead)" />
+        </g>
+      )
+    }
+    items.pop();
+    return items;
+  }
+
   function printLinks(){
-    const items = []
+    const items = [];
 
     for (const link of links()) {
       items.push(<path className="link" d={link.d} style={link.style}></path>)
@@ -124,7 +173,7 @@ function App() {
   }
 
   function printNode(){
-    const items = []
+    const items = [];
 
     for (const node of nodes()) {
       items.push(<g className="node" key={node.id}>
@@ -159,6 +208,7 @@ function App() {
         className="svg"
       >
         {printLinks()}
+        { btree instanceof BPlusTree ? printArrows() : null}
         {printNode()}
     </svg>
     );
