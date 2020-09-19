@@ -1,7 +1,7 @@
 import React from 'react';
 import * as d3 from 'd3';
 import './App.css';
-import { BTree } from './components/BTree/BTree';
+import { BPlusTree } from './components/B+Tree/BPlusTree';
 
 const margin = {
   top: 20, left: 0,
@@ -36,9 +36,9 @@ const settings = {
 
 function App() {
 
-  const btree = new BTree<number>(3);
+  const btree = new BPlusTree<number>(3);
   
-  for(let i=0; i<15; i++){
+  for(let i = 0; i < 5 ; i++){
     btree.insert(i);
   }
 
@@ -53,7 +53,6 @@ function App() {
       const nodes = getNodes(root.descendants());
       return nodes;
     }
-    return undefined;
   };
 
   function links() {
@@ -61,7 +60,6 @@ function App() {
       const links = getLinks(root.descendants());
       return links;
     }
-    return undefined;
   };
 
   function getSVGParams(key: any, position: any, keys: any) {
