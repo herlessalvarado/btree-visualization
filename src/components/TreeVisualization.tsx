@@ -1,14 +1,15 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import * as d3 from 'd3';
 import ScrollElement from 'rc-scroll-anim/lib/ScrollElement';
 import QueueAnim from 'rc-queue-anim';
+import { Input, Button } from 'antd';
 import { BPlusTree } from '../structures/BPlusTree/BPlusTree';
 import { useStore } from 'react-redux';
 
 function getD3Tree (btree: any) {
   const tree = d3.tree().size([1000, 50 - 200]).separation(() => (38 * 2));
   let BTREE = btree.toHierarchy(btree.getRoot());
-  return tree(d3.hierarchy(BTREE))
+  return tree(d3.hierarchy(BTREE));
 }
 
 export default function TreeVisualization() {
@@ -48,10 +49,17 @@ export default function TreeVisualization() {
 
   const [root, setRoot] = React.useState<any>(getD3Tree(store.getState().treeObject));
 
-  const [input, setInput] = React.useState<number>();
+  const [input, setInput] = React.useState<any>();
 
-  const handleInput = (event: ChangeEvent<any>) => {
-    setInput(parseInt(event.target.value))
+  const handleInput = (e: any) => {
+    const newNumber = parseInt(e.target.value || 0, 10);
+    if (Number.isNaN(input)) {
+      return;
+    }
+    if(newNumber > 99) {
+      return;
+    }
+    setInput(newNumber);
   }
 
   const insertTree = () => {
@@ -146,7 +154,6 @@ export default function TreeVisualization() {
       }
       return {
         id: i,
-        // d: `M ${x} ${y} l ${xright} 0`,
         x1: `${x}`,
         y1: `${y}`,
         x2: `${xright}`,
@@ -158,7 +165,6 @@ export default function TreeVisualization() {
   function printArrows() {
     const items = [];
     for(const arrow of arrows()) {
-      // <path className="arrow" d={arrow.d} style={arrow.style}></path>
       items.push(
         <g>
           <defs>
@@ -218,10 +224,27 @@ export default function TreeVisualization() {
   
     return (
       <section className="page banner-wrapper">
-          <input type="number" style={{
+        {/* {store.getState().dataType === 'number' ? <input type="number" style={{
             marginTop: `80px`
-          }} onChange={handleInput}></input>
-          <button onClick={insertTree}>INSERTAR</button>
+          }} onChange={handleInput}></input> :
+          <input type="text" style={{
+            marginTop: `80px`
+          }} onChange={handleInput}></input>} */}
+          <div className="insert-container">
+            <Input
+              type="text"
+              value={input | 0}
+              onChange={handleInput}
+              style={{ width: 100 }}
+            />
+            <Button type="primary" onClick={insertTree}>Insert</Button>
+            {/* <Search
+              className="insert-input"
+              enterButton="Insert"
+              size="large"
+              onSearch={value => handleInput(value)}
+            /> */}
+          </div>
           <ScrollElement
         className="page"
         id="banner"

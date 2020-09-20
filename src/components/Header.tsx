@@ -4,21 +4,11 @@ import { Menu, Row, Col } from 'antd';
 export default function Header() {
 
     const menu = [
-      <Menu mode="horizontal" defaultSelectedKeys={['home']} id="nav" key="nav">
-        <Menu.Item key="home">
-          首页
-        </Menu.Item>
-        <Menu.Item key="docs/spec">
-          指引
-        </Menu.Item>
-        <Menu.Item key="docs/react">
-          组件
-        </Menu.Item>
-        <Menu.Item key="docs/pattern">
-          模式
-        </Menu.Item>
-        <Menu.Item key="docs/resource">
-          资源
+      <Menu mode="horizontal" defaultSelectedKeys={['github']} id="nav" key="nav">
+        <Menu.Item key="github">
+          <a href="https://github.com/herlessalvarado/btree-visualization" target="_blank">
+            Github
+          </a>
         </Menu.Item>
       </Menu>,
     ];

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './assets/header.less';
 import './assets/banner.less';
+import './assets/tree.less';
 import Header from './components/Header';
 import Banner from './components/Banner';
 import TreeVisualization from './components/TreeVisualization';
