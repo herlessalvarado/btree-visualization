@@ -190,7 +190,7 @@ export default function TreeVisualization() {
     const items = [];
     for(const arrow of arrows()) {
       items.push(
-        <g>
+        <g key={arrow.id}>
           <defs>
             <marker id="arrowhead" markerWidth="10" markerHeight="7" 
             refX="0" refY="3.5" orient="auto">
@@ -198,7 +198,7 @@ export default function TreeVisualization() {
             </marker>
           </defs>
           <line x1={arrow.x1} y1={arrow.y1} y2={arrow.y1} x2={arrow.x2} stroke="#000" 
-  marker-end="url(#arrowhead)" />
+  markerEnd="url(#arrowhead)" />
         </g>
       )
     }
@@ -210,7 +210,7 @@ export default function TreeVisualization() {
     const items = [];
 
     for (const link of links()) {
-      items.push(<path className="link" d={link.d} style={link.style}></path>)
+      items.push(<path className="link" key={link.id} d={link.d} style={link.style}></path>)
     }
     return items
   }

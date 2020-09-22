@@ -63,7 +63,7 @@ export default function Banner() {
         playScale={0.9}
       >
         <QueueAnim className="banner-text-wrapper" type="left" delay={1000} key="banner">
-            <h2 key="h2">SELECT YOUR <p>BTREE</p></h2>
+            <h2>SELECT YOUR <p>BTREE</p></h2>
             <Select
                 showSearch
                 style={{ width: 300 }}
@@ -72,7 +72,7 @@ export default function Banner() {
                 <Option value="btree">B Tree</Option>
                 <Option value="bplustree">B+ Tree</Option>
             </Select>
-            <h2 key="h2">SELECT YOUR <p>DATA TYPE</p></h2>
+            <h2>SELECT YOUR <p>DATA TYPE</p></h2>
             <Select
                 showSearch
                 style={{ width: 300 }}
@@ -81,7 +81,7 @@ export default function Banner() {
                 <Option value="number">Number</Option>
                 <Option value="string">String</Option>
             </Select>
-            <h2 key="h2">SELECT YOUR <p>MAX DEGREE</p></h2>
+            <h2>SELECT YOUR <p>MAX DEGREE</p></h2>
             <Select
                 showSearch
                 style={{ width: 300 }}
@@ -92,19 +92,9 @@ export default function Banner() {
                 <Option value="5">5</Option>
                 <Option value="6">6</Option>
             </Select>
-            <h2 key="h2">SEE THE MAGIC</h2>
+            <h2>SEE THE MAGIC</h2>
             {}
             <Button className="start-button clearfix" type="primary" onClick={handleChangeView}>Go</Button>
-          {/* <p key="content">一个 UI 设计语言</p>
-          <span className="line" key="line" />
-          <div key="button1" className="start-button clearfix">
-            <a>
-              设计规范
-            </a>
-            <a>
-              开发指引
-            </a>
-          </div> */}
         </QueueAnim>
         <Icon type="down" className="down" />
       </ScrollElement>
