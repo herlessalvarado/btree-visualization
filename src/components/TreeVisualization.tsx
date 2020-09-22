@@ -51,23 +51,47 @@ export default function TreeVisualization() {
 
   const [input, setInput] = React.useState<any>();
 
+  const [alreadyInserted, setAlreadyInserted] = React.useState<any>([]);
+
   const handleInput = (e: any) => {
-    const newNumber = parseInt(e.target.value || 0, 10);
-    if (Number.isNaN(input)) {
-      return;
+    let current;
+    if(store.getState().dataType === 'number'){
+      current = parseInt(e.target.value || 0, 10);
+      if (Number.isNaN(current)) {
+        return;
+      }
+      if(current > 99) {
+        return;
+      }
+    }else{
+      if((e.target.value.charCodeAt(0) >= 97 && e.target.value.charCodeAt(0) <= 122)){
+        if(e.target.value[e.target.value.length-1].charCodeAt(0) >= 97 && e.target.value[e.target.value.length-1].charCodeAt(0) <= 122){
+          setInput(e.target.value[e.target.value.length-1]);
+          return;
+        }else{
+          if(Number.isNaN(e.target.value[e.target.value.length-1])){
+            current = e.target.value;
+          }else{
+            return;
+          }
+        }
+      }else{
+        return;
+      }
     }
-    if(newNumber > 99) {
-      return;
-    }
-    setInput(newNumber);
+    setInput(current);
   }
 
   const insertTree = () => {
+    if(alreadyInserted.includes(input)){
+      return;
+    }
+    alreadyInserted.push(input);
+    setAlreadyInserted(alreadyInserted);
     store.dispatch({
       type: 'INSERT_TREE',
       value: input,
     });
-    console.log(store.getState().treeObject);
     setRoot(getD3Tree(store.getState().treeObject));
   }
 
@@ -224,26 +248,14 @@ export default function TreeVisualization() {
   
     return (
       <section className="page banner-wrapper">
-        {/* {store.getState().dataType === 'number' ? <input type="number" style={{
-            marginTop: `80px`
-          }} onChange={handleInput}></input> :
-          <input type="text" style={{
-            marginTop: `80px`
-          }} onChange={handleInput}></input>} */}
           <div className="insert-container">
             <Input
               type="text"
-              value={input | 0}
+              value={input}
               onChange={handleInput}
               style={{ width: 100 }}
             />
             <Button type="primary" onClick={insertTree}>Insert</Button>
-            {/* <Search
-              className="insert-input"
-              enterButton="Insert"
-              size="large"
-              onSearch={value => handleInput(value)}
-            /> */}
           </div>
           <ScrollElement
         className="page"
