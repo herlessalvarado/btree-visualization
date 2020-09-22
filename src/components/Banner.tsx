@@ -1,8 +1,16 @@
 import React from 'react';
 import ScrollElement from 'rc-scroll-anim/lib/ScrollElement';
-import { Icon, Select, Button } from 'antd';
+import { Icon, Select, Button, notification } from 'antd';
 import QueueAnim from 'rc-queue-anim';
 import { useStore } from 'react-redux';
+
+const openNotification = () => {
+  notification.open({
+    message: 'Notification',
+    description:
+      'Please fill all the selects.',
+  });
+};
 
 export default function Banner() {
 
@@ -52,6 +60,8 @@ export default function Banner() {
           type: 'SET_VIEW_TREE',
           text: true,
         });
+      }else{
+        openNotification();
       }
     }
 
@@ -62,9 +72,11 @@ export default function Banner() {
         id="banner"
         playScale={0.9}
       >
-        <QueueAnim className="banner-text-wrapper" type="left" delay={1000} key="banner">
-            <h2>SELECT YOUR <p>BTREE</p></h2>
+        <QueueAnim className="banner-text-wrapper" type={['right', 'left']}
+          ease={['easeOutQuart', 'easeInOutQuart']} delay={500} key="banner">
+            <h2 key="1">SELECT YOUR <p>BTREE</p></h2>
             <Select
+                key="2"
                 showSearch
                 style={{ width: 300 }}
                 onChange={handleTreeType}
@@ -72,8 +84,9 @@ export default function Banner() {
                 <Option value="btree">B Tree</Option>
                 <Option value="bplustree">B+ Tree</Option>
             </Select>
-            <h2>SELECT YOUR <p>DATA TYPE</p></h2>
+            <h2 key="3">SELECT YOUR <p>DATA TYPE</p></h2>
             <Select
+                key="4"
                 showSearch
                 style={{ width: 300 }}
                 onChange={handleDataType}
@@ -81,8 +94,9 @@ export default function Banner() {
                 <Option value="number">Number</Option>
                 <Option value="string">String</Option>
             </Select>
-            <h2>SELECT YOUR <p>MAX DEGREE</p></h2>
+            <h2 key="5">SELECT YOUR <p>MAX DEGREE</p></h2>
             <Select
+                key="6"
                 showSearch
                 style={{ width: 300 }}
                 onChange={handleMaxDegree}
@@ -92,9 +106,8 @@ export default function Banner() {
                 <Option value="5">5</Option>
                 <Option value="6">6</Option>
             </Select>
-            <h2>SEE THE MAGIC</h2>
-            {}
-            <Button className="start-button clearfix" type="primary" onClick={handleChangeView}>Go</Button>
+            <h2 key="7">SEE THE MAGIC</h2>
+            <Button key="8" className="start-button clearfix" type="primary" onClick={handleChangeView}>Go</Button>
         </QueueAnim>
         <Icon type="down" className="down" />
       </ScrollElement>

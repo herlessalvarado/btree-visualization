@@ -2,9 +2,17 @@ import React from 'react';
 import * as d3 from 'd3';
 import ScrollElement from 'rc-scroll-anim/lib/ScrollElement';
 import QueueAnim from 'rc-queue-anim';
-import { Input, Button } from 'antd';
+import { Input, Button, notification } from 'antd';
 import { BPlusTree } from '../structures/BPlusTree/BPlusTree';
 import { useStore } from 'react-redux';
+
+const openNotification = () => {
+  notification.open({
+    message: 'Notification',
+    description:
+      'The element is already inserted',
+  });
+};
 
 function getD3Tree (btree: any) {
   const tree = d3.tree().size([1000, 50 - 200]).separation(() => (38 * 2));
@@ -16,13 +24,13 @@ export default function TreeVisualization() {
 
   let store = useStore();
 
-  const margin = {
-    top: 20, left: 0,
-  };
+  const [root, setRoot] = React.useState<any>(getD3Tree(store.getState().treeObject));
+
+  const [input, setInput] = React.useState<any>();
+
+  const [alreadyInserted, setAlreadyInserted] = React.useState<any>([]);
   
   const settings = {
-    strokeColor: '#29B5FF',
-    width: 50,
     keyCellWidth: 38,
     keyCellHeight: 28,
     linkStyles: {
@@ -46,54 +54,6 @@ export default function TreeVisualization() {
       },
     },
   };
-
-  const [root, setRoot] = React.useState<any>(getD3Tree(store.getState().treeObject));
-
-  const [input, setInput] = React.useState<any>();
-
-  const [alreadyInserted, setAlreadyInserted] = React.useState<any>([]);
-
-  const handleInput = (e: any) => {
-    let current;
-    if(store.getState().dataType === 'number'){
-      current = parseInt(e.target.value || 0, 10);
-      if (Number.isNaN(current)) {
-        return;
-      }
-      if(current > 99) {
-        return;
-      }
-    }else{
-      if((e.target.value.charCodeAt(0) >= 97 && e.target.value.charCodeAt(0) <= 122)){
-        if(e.target.value[e.target.value.length-1].charCodeAt(0) >= 97 && e.target.value[e.target.value.length-1].charCodeAt(0) <= 122){
-          setInput(e.target.value[e.target.value.length-1]);
-          return;
-        }else{
-          if(Number.isNaN(e.target.value[e.target.value.length-1])){
-            current = e.target.value;
-          }else{
-            return;
-          }
-        }
-      }else{
-        return;
-      }
-    }
-    setInput(current);
-  }
-
-  const insertTree = () => {
-    if(alreadyInserted.includes(input)){
-      return;
-    }
-    alreadyInserted.push(input);
-    setAlreadyInserted(alreadyInserted);
-    store.dispatch({
-      type: 'INSERT_TREE',
-      value: input,
-    });
-    setRoot(getD3Tree(store.getState().treeObject));
-  }
 
   function nodes() {
     if (root) {
@@ -141,8 +101,8 @@ export default function TreeVisualization() {
 
   function getNodes(descendants: any) {
     return descendants.map((d: any, i: any) => {
-      const x = `${margin.left + d.x}px`;
-      const y = `${margin.top - d.y}px`;
+      const x = `${0 + d.x}px`;
+      const y = `${20 - d.y}px`;
       return {
         id: i,
         keys: getKeys(d.data.leaves.keys),
@@ -155,10 +115,10 @@ export default function TreeVisualization() {
   
   function getLinks(descendants: any) {
     return descendants.slice(1).map((d: any, i: any) => {
-      const x = d.x + margin.left;
-      const parentx = margin.left + d.parent.x;
-      const y = margin.top - d.y;
-      const parenty = margin.top - d.parent.y;
+      const x = d.x + 0;
+      const parentx = 0 + d.parent.x;
+      const y = 20 - d.y;
+      const parenty = 20 - d.parent.y;
       const highlighted = d.data.leaves.keys.some((key: any) => key.highlighted) && d.parent.data.leaves.keys.some((key: any) => key.highlighted);
       return {
         id: i,
@@ -171,7 +131,7 @@ export default function TreeVisualization() {
   function getArrows(leaves: any) {
     return leaves.map((d: any, i: any, a: any) => {
       const x = d.x;
-      const y = margin.top - d.y;
+      const y = 20 - d.y;
       let xright = 0;
       if(a[i+1]){
         xright = a[i+1].x - (settings.keyCellWidth*2);
@@ -245,37 +205,80 @@ export default function TreeVisualization() {
     }
     return items
   }
+
+  const handleInput = (e: any) => {
+    let current;
+    if(store.getState().dataType === 'number'){
+      current = parseInt(e.target.value || 0, 10);
+      if (Number.isNaN(current)) {
+        return;
+      }
+      if(current > 99) {
+        return;
+      }
+    }else{
+      if((e.target.value.charCodeAt(0) >= 97 && e.target.value.charCodeAt(0) <= 122)){
+        if(e.target.value[e.target.value.length-1].charCodeAt(0) >= 97 && e.target.value[e.target.value.length-1].charCodeAt(0) <= 122){
+          setInput(e.target.value[e.target.value.length-1]);
+          return;
+        }else{
+          if(Number.isNaN(e.target.value[e.target.value.length-1])){
+            current = e.target.value;
+          }else{
+            return;
+          }
+        }
+      }else{
+        return;
+      }
+    }
+    setInput(current);
+  }
+
+  const insertTree = () => {
+    if(alreadyInserted.includes(input)){
+      openNotification();
+      return;
+    }
+    alreadyInserted.push(input);
+    setAlreadyInserted(alreadyInserted);
+    store.dispatch({
+      type: 'INSERT_TREE',
+      value: input,
+    });
+    setRoot(getD3Tree(store.getState().treeObject));
+  }
   
-    return (
-      <section className="page banner-wrapper">
-          <div className="insert-container">
-            <Input
-              type="text"
-              value={input}
-              onChange={handleInput}
-              style={{ width: 100 }}
-            />
-            <Button type="primary" onClick={insertTree}>Insert</Button>
-          </div>
-          <ScrollElement
-        className="page"
-        id="banner"
-        playScale={0.9}
-      >
-        <QueueAnim className="banner-text-wrapper" type="left" delay={1000} key="banner">
-        <svg
-            className="svg"
-            style={{
-              width: `1000px`,
-              height: `600px`
-            }}
-          >
-            {printLinks()}
-            { store.getState().treeObject instanceof BPlusTree ? printArrows() : null}
-            {printNode()}
-        </svg>
-        </QueueAnim>
-        </ScrollElement>
-      </section>
-    );
+  return (
+    <section className="page banner-wrapper">
+        <div className="insert-container">
+          <Input
+            type="text"
+            value={input}
+            onChange={handleInput}
+            style={{ width: 100 }}
+          />
+          <Button type="primary" onClick={insertTree}>Insert</Button>
+        </div>
+        <ScrollElement
+      className="page"
+      id="banner"
+      playScale={0.9}
+    >
+      <QueueAnim className="banner-text-wrapper" type="left" delay={1000} key="banner">
+      <svg
+          className="svg"
+          style={{
+            width: `1000px`,
+            height: `600px`
+          }}
+        >
+          {printLinks()}
+          { store.getState().treeObject instanceof BPlusTree ? printArrows() : null}
+          {printNode()}
+      </svg>
+      </QueueAnim>
+      </ScrollElement>
+    </section>
+  );
 }
