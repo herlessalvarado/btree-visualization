@@ -35,7 +35,7 @@ export default function TreeVisualization() {
     keyCellHeight: 28,
     linkStyles: {
       plain: {
-        stroke: 'black',
+        stroke: '#654321',
       },
       highlighted: {
         stroke: 'red',
@@ -44,8 +44,8 @@ export default function TreeVisualization() {
     rectStyles: {
       plain: {
         fill: 'white',
-        stroke: 'black',
-        strokeWidth: 2,
+        stroke: '#143b29',
+        strokeWidth: 5,
       },
       highlighted: {
         fill: 'lightblue',
@@ -134,7 +134,7 @@ export default function TreeVisualization() {
       const y = 20 - d.y;
       let xright = 0;
       if(a[i+1]){
-        xright = a[i+1].x - (settings.keyCellWidth*2);
+        xright = a[i+1].x - (settings.keyCellWidth*4);
       }
       return {
         id: i,
@@ -152,12 +152,11 @@ export default function TreeVisualization() {
       items.push(
         <g key={arrow.id}>
           <defs>
-            <marker id="arrowhead" markerWidth="10" markerHeight="7" 
-            refX="0" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" />
+            <marker id="arrowhead" markerWidth="15" markerHeight="15" refX="0" refY="3.5" orient="auto" markerUnits="strokeWidth">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#654321" />
             </marker>
           </defs>
-          <line x1={arrow.x1} y1={arrow.y1} y2={arrow.y1} x2={arrow.x2} stroke="#000" 
+          <line strokeWidth="5" x1={arrow.x1} y1={arrow.y1} y2={arrow.y1} x2={arrow.x2} stroke="#654321" 
   markerEnd="url(#arrowhead)" />
         </g>
       )
@@ -170,7 +169,7 @@ export default function TreeVisualization() {
     const items = [];
 
     for (const link of links()) {
-      items.push(<path className="link" key={link.id} d={link.d} style={link.style}></path>)
+      items.push(<path className="link" strokeWidth="5" key={link.id} d={link.d} style={link.style}></path>)
     }
     return items
   }
@@ -258,7 +257,7 @@ export default function TreeVisualization() {
             onChange={handleInput}
             style={{ width: 100 }}
           />
-          <Button type="primary" onClick={insertTree}>Insert</Button>
+          <Button onClick={insertTree}>Insert</Button>
         </div>
         <ScrollElement
       className="page"

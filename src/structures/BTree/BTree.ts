@@ -55,6 +55,19 @@ export class BTree<T>{
         return this.root;
     }
 
+    public search(node : Node<T>,value : T) : boolean {
+        if(node.data.includes(value)){
+            return true;
+        }else if(node.isLeaf){
+            return false;
+        }
+        let i = 0;
+        while(i <= node.data.length && node.data[i] < value){
+            i++;
+        }
+        return this.search(node.children[i], value);
+    }
+
     public toHierarchy(node: Node<T>) {
         const hierarchy = new NodeHierarchy<T>();
         hierarchy.leaves = new LeafHierarchy<T>();
