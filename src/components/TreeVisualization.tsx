@@ -235,6 +235,7 @@ export default function TreeVisualization() {
   }
 
   const insertTree = () => {
+    if(input === undefined) return;
     if(alreadyInserted.includes(input)){
       openNotification();
       return;
